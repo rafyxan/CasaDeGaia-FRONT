@@ -1,0 +1,150 @@
+@import "tailwindcss";
+
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light;
+  color: rgba(0, 0, 0, 0.87);
+  background-color: #cc5959;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #000000;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
+/* --- Colores de Fondo --- */
+.bg-footer {
+  background-color: #7d8f6d; /* Verde oliva oscuro */
+}
+
+.bg-card-white {
+  background-color: #ffffff; /* Blanco puro */
+}
+
+.bg-button-sage {
+  background-color: #a3a380; /* Verde oliva suave/botón */
+}
+
+.bg-beige-light {
+  background-color: #f8f5ed; /* Fondo beige claro de la web */
+}
+
+/* --- Colores de Texto --- */
+.text-footer {
+  color: #e8e4db; /* Texto claro/beige */
+}
+
+.text-highlight {
+  color: #ffffff; /* Color más brillante para iconos/títulos */
+}
+
+.text-primary-dark {
+  color: #4a4a4a; /* Gris oscuro para lectura */
+}
+
+.text-secondary-muted {
+  color: #4b5563; /* Gris medio (estilo gray-600) */
+}
+
+.text-title-sage {
+  color: #7d8f6d; /* Verde salvia para títulos */
+}
+
+.text-star-yellow {
+  color: #facc15; /* Amarillo para estrellas (estilo yellow-400) */
+}
+
+.text-white-pure {
+  color: #ffffff; /* Texto blanco para botones */
+}
+
+/* --- Estilos Adicionales --- */
+.divider-line {
+  border-top: 1px solid #6d7e5d; /* Línea divisoria */
+}
+
+.bg-color-beige {
+  background-color: #f8f5ed; /* Fondo beige claro */
+}
+
+/* --- Bordes y Separadores --- */
+.border-light-gray {
+  border: 1px solid #e5e7eb; /* Borde sutil (estilo gray-200) */
+}
+
+.divider-sage {
+  border-top: 1px solid #7d8f6d; /* Línea divisoria en color marca */
+}
+
+/* --- Estilos para el Formulario de Newsletter --- */
+.text-label-sage {
+  color: #7d8f6d; /* Verde para los nombres de los campos */
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.input-field {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+  background-color: #fcfaf7; /* Un blanco roto muy sutil */
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.input-field:focus {
+  border-color: #a3a380;
+}
+
+.shadow-card {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
