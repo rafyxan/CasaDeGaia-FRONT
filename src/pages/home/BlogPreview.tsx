@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTag, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
-// 1. Importa las imágenes necesarias (ajusta los nombres según tus archivos)
+// 1. Importa las imágenes necesarias
 import blogImg1 from '../../assets/img/54fcf8cfeb7d19b0569ece05ac176f83.png';
 import blogImg2 from '../../assets/img/4714a654d8fb6a58dfa09c7d664d7374.png';
 import blogImg3 from '../../assets/img/a93d8a306303550ed90d28e804e997d1.png';
@@ -81,7 +81,7 @@ export default function BlogPreview({}: Props) {
                 </p>
 
                 <a 
-                  href="#" 
+                  href="/blog" 
                   className="inline-flex items-center gap-2 text-sm font-bold text-[#c2c086] hover:text-[#b0ae75] transition-colors"
                 >
                   Leer Más <FontAwesomeIcon icon={faArrowRight} className="text-xs" />
