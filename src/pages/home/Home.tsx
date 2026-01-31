@@ -14,7 +14,6 @@ export default function Home() {
         <Navbar /> 
 
         <main>
-            <h1 className="text-3xl p-8 text-center">Contenido de la Página Principallllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll</h1>        
             <HeroSection />
             <InfoPreview />
             <ExploreHouse />

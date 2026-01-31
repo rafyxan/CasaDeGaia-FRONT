@@ -50,7 +50,7 @@ const Navbar: React.FC = () => {
                   key={link.name}
                   to={link.path}
                   // Añadidas clases 'flex items-center space-x-2' para alinear el icono y el texto
-                  className="mr-13 text-lime-600 hover:text-lime-800 transition duration-150 ease-in-out font-bold text-lg flex items-center space-x-2"
+                  className="mr-13 text-lime-600 hover:text-lime-800 transition duration-150 ease-in-out font-bold text-lg flex items-center space-x-2 font-serif"
                 >
                   {/* --- CAMBIO 3: RENDERIZAR EL ICONO --- */}
                   <FontAwesomeIcon icon={link.icon} className="w-5 h-5" /> 
