@@ -2,7 +2,7 @@ import Navbar from '../../components/common/Navbar';
 import Footer from '../../components/layout/Footer';
 import FindUs from '../home/FindUs';
 import Reviews from '../home/Reviews';
-import Newsletter from '../home/Newsletter';
+import ContactSection from './ContactSection';
 
 export default function Contact() {
   return (
@@ -10,7 +10,7 @@ export default function Contact() {
         <Navbar /> 
 
         <main>
-            <Newsletter />
+            <ContactSection />
             <Reviews />
             <FindUs />
         </main>
