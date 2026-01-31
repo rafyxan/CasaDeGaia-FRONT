@@ -53,7 +53,7 @@ export default function Reviews({}: Props) {
 
   return (
     <section className={`py-16 bg-color-beige ${textColorPrimary}`}>
-      <div className="container mx-auto px-4 max-w-screen-lg">
+      <div className="container mx-auto px-4 max-w-5xl">
         {/* Título y Subtítulo */}
         <div className="text-center mb-12">
           <h2 className={`text-4xl font-serif mb-4 ${titleColor}`}>Lo que nuestros huéspedes dicen</h2>
