@@ -1,4 +1,4 @@
-import heroBg from '../../assets/blog/photo-1649159045779-24e88d9ad82d.png';
+import heroBg from '../../assets/about/photo-1673555136466-beb9efeb6066.png';
 
 export default function HeroSection() {
   return (
@@ -25,12 +25,12 @@ export default function HeroSection() {
         
         {/* Texto más pequeño: de 7xl a 5xl en escritorio */}
         <h1 className="text-white text-4xl md:text-5xl font-serif mb-4 leading-tight drop-shadow-md">
-          Nuestro Blog
+          Nuestra Esencia
         </h1>
 
         {/* Párrafo más compacto: de text-xl a text-base/lg */}
         <p className="text-white/90 text-base md:text-lg font-light max-w-xl leading-relaxed drop-shadow-sm">
-          Inspiración, consejos y las últimas novedades de Casa de Gaia.
+          Descubre la pasión y la historia detrás de Casa de Gaia, un lugar donde los sueños toman forma.
         </p>
 
       </div>

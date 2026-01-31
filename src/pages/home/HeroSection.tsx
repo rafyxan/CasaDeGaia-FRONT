@@ -17,7 +17,7 @@ export default function HeroSection({}: Props) {
           backgroundImage: `url(${imagePath})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          filter: 'blur(3px)', // Efecto de desenfoque suave
+          filter: 'blur(4px)', // Efecto de desenfoque suave
         }}
       >
         {/* 2. Overlay Oscuro (para que el texto sea legible) */}
