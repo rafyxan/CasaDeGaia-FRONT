@@ -8,6 +8,7 @@ import AboutPage from './pages/about/About';
 import RatesPage from './pages/rates/Rates';
 import ContactPage from './pages/contact/Contact';
 import Blog from './pages/blog/Blog';
+import BookingPage from './pages/rates/BookingForm';
 import NotFound from './pages/blog/Blog'; // Componente de error 404
 
 const App: React.FC = () => {
@@ -22,6 +23,7 @@ const App: React.FC = () => {
         {/* Ruta para el login, como en el Navbar */}
         <Route path="/login" element={<div>Página de Login</div>} /> 
         <Route path="/blog" element={<Blog />} />
+        <Route path="/reservar" element={<BookingPage />} />
         
         {/* Ruta catch-all para errores 404 */}
         <Route path="*" element={<NotFound />} />
