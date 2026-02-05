@@ -2,272 +2,249 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
-  faCalendarAlt, 
-  faUsers, 
-  faArrowLeft, 
-  faClock,
-  faCheckCircle,
-  faTag,
-  faMoon
+  faArrowLeft, faSun, faSnowflake, faExclamationCircle, faGift, faCheckCircle, faMoon
 } from '@fortawesome/free-solid-svg-icons';
 
 export default function BookingPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const initialPack = searchParams.get('pack') || 'estandar';
+  
+  const packId = searchParams.get('pack') || 'estandar';
+  const seasonParam = searchParams.get('season') || 'baja';
 
-  const [pack, setPack] = useState(initialPack);
+  const packNames: { [key: string]: string } = {
+    estandar: "Tarifa Estándar - 12h",
+    economica: "Tarifa Económica - 8h",
+    casa_completa: "Casa Completa - Pernocta",
+    premium: "Tarifa Premium - 12h"
+  };
+
+  const ranges = {
+    alta: { min: "2026-06-01", max: "2026-09-30", label: "Junio a Septiembre" },
+    baja: { min: "2026-10-01", max: "2027-05-31", label: "Octubre a Mayo" }
+  };
+  const currentRange = seasonParam === 'alta' ? ranges.alta : ranges.baja;
+
   const [adults, setAdults] = useState(10);
   const [kids, setKids] = useState(0);
   const [date, setDate] = useState('');
+  const [dateError, setDateError] = useState('');
   const [startTime, setStartTime] = useState('12:00');
   const [endTime, setEndTime] = useState('');
   const [nights, setNights] = useState(1);
   const [total, setTotal] = useState(0);
   const [isWeekend, setIsWeekend] = useState(false);
   const [discountPercent, setDiscountPercent] = useState(0);
+  const [currentPrices, setCurrentPrices] = useState({ adult: 0, kid: 0, baseCasa: 0 });
 
-  const [currentPrices, setCurrentPrices] = useState({ adult: 0, kid: 0 });
-
-  // Configuración de Precios Base Casa
-  const PRECIO_BASE_CASA = 450; 
-
-  useEffect(() => {
-    if (date) {
-      const selectedDate = new Date(date);
-      const day = selectedDate.getDay(); 
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selected = e.target.value;
+    if (selected < currentRange.min || selected > currentRange.max) {
+      setDateError(`Válido solo en: ${currentRange.label}`);
+      setDate('');
+    } else {
+      setDateError('');
+      setDate(selected);
+      const selDate = new Date(selected);
+      const day = selDate.getDay();
       setIsWeekend(day === 5 || day === 6 || day === 0);
     }
+  };
 
-    if (startTime) {
-      const [hours, minutes] = startTime.split(':').map(Number);
-      let duration = (pack === 'casa_completa') ? 24 : 14; 
-      const endHours = (hours + duration) % 24;
-      setEndTime(`${endHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`);
-    }
-
+  useEffect(() => {
     let adultPrice = 0;
-    let kidPrice = 15;
+    let kidPrice = 0;
+    let baseCasa = 0;
+    let duration = 12;
 
-    if (pack === 'premium') {
-      adultPrice = 50;
-      kidPrice = 20;
+    if (seasonParam === 'alta') {
+      if (packId === 'estandar') { adultPrice = isWeekend ? 35 : 30; kidPrice = 15; duration = 12; }
+      if (packId === 'casa_completa') { adultPrice = 35; kidPrice = 15; baseCasa = 450; duration = 24; }
+      if (packId === 'premium') { adultPrice = 50; kidPrice = 20; duration = 12; }
     } else {
-      adultPrice = isWeekend ? 35 : 30;
-      kidPrice = 15;
+      if (packId === 'estandar') { adultPrice = 25; kidPrice = 12; duration = 12; }
+      if (packId === 'economica') { adultPrice = 18; kidPrice = 9; duration = 8; }
+      if (packId === 'casa_completa') { adultPrice = 25; kidPrice = 12; baseCasa = 400; duration = 24; }
     }
-
-    setCurrentPrices({ adult: adultPrice, kid: kidPrice });
-
-    // 1. CÁLCULO PRECIO PERSONAS
-    let totalPersonasBase = (adults * adultPrice) + (kids * kidPrice);
-
-    // 2. APLICAR DESCUENTO (SÓLO A LAS PERSONAS)
-    const totalPeopleCount = adults + kids;
-    let discount = 0;
-    if (totalPeopleCount >= 70) discount = 0.20;
-    else if (totalPeopleCount >= 50) discount = 0.15;
-    else if (totalPeopleCount >= 30) discount = 0.10;
     
-    setDiscountPercent(discount * 100);
-    const totalPersonasConDescuento = totalPersonasBase * (1 - discount);
+    const finalDuration = packId !== 'casa_completa' ? duration + 2 : duration;
+    setCurrentPrices({ adult: adultPrice, kid: kidPrice, baseCasa });
 
-    // 3. CÁLCULO PRECIO ALOJAMIENTO (NETO, SIN DESCUENTO)
-    let totalAlojamiento = 0;
-    if (pack === 'casa_completa') {
-      const precioNochesExtra = nights > 1 ? (nights - 1) * (PRECIO_BASE_CASA * 0.5) : 0;
-      totalAlojamiento = PRECIO_BASE_CASA + precioNochesExtra;
+    const totalPeople = adults + kids;
+    let discount = 0;
+    if (totalPeople >= 70) discount = 0.20;
+    else if (totalPeople >= 50) discount = 0.15;
+    else if (totalPeople >= 30) discount = 0.10;
+    setDiscountPercent(discount * 100);
+
+    const subtotalPersonas = (adults * adultPrice) + (kids * kidPrice);
+    const totalPersonasConDescuento = subtotalPersonas * (1 - discount);
+
+    let totalCostoCasa = 0;
+    if (baseCasa > 0) {
+      const costoNochesExtra = nights > 1 ? (nights - 1) * (baseCasa * 0.5) : 0;
+      totalCostoCasa = baseCasa + costoNochesExtra;
     }
 
-    // 4. TOTAL FINAL
-    setTotal(Math.round(totalPersonasConDescuento + totalAlojamiento));
+    setTotal(Math.round(totalPersonasConDescuento + totalCostoCasa));
 
-  }, [pack, adults, kids, nights, startTime, date, isWeekend]);
+    const [hours, minutes] = startTime.split(':').map(Number);
+    const endHours = (hours + finalDuration) % 24;
+    setEndTime(`${endHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`);
+
+  }, [date, adults, kids, nights, startTime, packId, seasonParam, isWeekend]);
 
   return (
-    <section className="min-h-screen bg-[#fdfdfb] py-12 px-4 font-sans">
+    <section className="min-h-screen bg-[#fdfdfb] py-12 px-4">
       <div className="max-w-5xl mx-auto">
-        
-        <button 
-          onClick={() => navigate(-1)}
-          className="mb-8 flex items-center gap-2 bg-black text-white px-6 py-2 rounded-xl hover:bg-gray-800 transition-all font-bold"
-        >
-          <FontAwesomeIcon icon={faArrowLeft} />
-          Volver a tarifas
+        <button onClick={() => navigate(-1)} className="mb-8 flex items-center gap-2 !bg-[#f5f5f0] text-[#7a8a46] px-6 py-2 rounded-xl font-bold border border-[#c2c086]/30 hover:!bg-white transition-all shadow-sm">
+          <FontAwesomeIcon icon={faArrowLeft} /> Cambiar Tarifa
         </button>
 
+        <div className="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#c2c086]/20 pb-6">
+          <div>
+            <span className="text-[#c2c086] text-[10px] font-black uppercase tracking-[0.2em]">Has seleccionado:</span>
+            <h1 className="text-4xl font-serif text-[#7a8a46] block">{packNames[packId] || "Tarifa Estándar"}</h1>
+          </div>
+          <div className="flex items-center gap-2 bg-[#f5f5f0] px-4 py-2 rounded-full border border-[#c2c086]/20">
+            <FontAwesomeIcon icon={seasonParam === 'alta' ? faSun : faSnowflake} className={seasonParam === 'alta' ? 'text-orange-400' : 'text-blue-400'} />
+            <span className="text-[#7a8a46] font-bold text-sm uppercase tracking-wider">Temporada {seasonParam}</span>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
           <div className="lg:col-span-2 space-y-6">
-            <div className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-gray-50">
-              <h2 className="text-4xl font-serif text-[#7a8a46] mb-8">Configura tu Reserva</h2>
-              
+            <div className="bg-white rounded-[2.5rem] p-8 shadow-xl border border-[#f0f2e8]">
+              <h2 className="text-2xl font-serif text-[#7a8a46] mb-6 flex items-center gap-3">
+                <FontAwesomeIcon icon={faCheckCircle} className="text-[#c2c086] text-lg" />
+                Configura tus detalles
+              </h2>
+
               <div className="space-y-8">
-                {/* 1. Selección de Pack */}
+                {/* FECHA */}
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-3 uppercase tracking-wider">Tu Pack Seleccionado</label>
-                  <select 
-                    value={pack} 
-                    onChange={(e) => setPack(e.target.value)}
-                    className="w-full p-5 rounded-2xl border border-gray-100 focus:ring-2 focus:ring-[#a3b355] outline-none bg-gray-50 font-bold text-gray-700 text-lg shadow-sm appearance-none"
-                  >
-                    <option value="estandar">Pack Estándar - 12h (+2h gratis)</option>
-                    <option value="premium">Pack Premium - 12h (Fijo 50€)</option>
-                    <option value="casa_completa">Casa Completa - Pernocta (24h)</option>
-                  </select>
+                  <label className="block text-[11px] font-black text-[#c2c086] uppercase mb-2 tracking-widest">1. Fecha del Evento</label>
+                  <input type="date" value={date} min={currentRange.min} max={currentRange.max} onChange={handleDateChange} className="w-full p-4 rounded-xl border-2 border-[#f0f2e8] !bg-[#fdfdfb] font-bold text-[#7a8a46]" />
                 </div>
 
-                {/* 2. Fecha y Tarifas */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-                  <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-2 font-serif uppercase tracking-wider">Fecha del Evento</label>
-                    <input 
-                      type="date" 
-                      className="w-full p-4 rounded-xl border border-gray-100 outline-none focus:ring-2 focus:ring-[#a3b355] bg-white shadow-sm font-medium"
-                      onChange={(e) => setDate(e.target.value)}
-                    />
-                    {date && (
-                      <p className={`text-[11px] mt-2 font-black uppercase tracking-wider ${isWeekend ? 'text-orange-500' : 'text-[#a3b355]'}`}>
-                         {isWeekend ? 'Tarifa Fin de Semana' : 'Tarifa Entre Semana'}
-                      </p>
-                    )}
+                {/* ASISTENTES */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-[#f9f9f6] p-6 rounded-3xl border border-[#f0f2e8] text-center">
+                    <label className="block text-[10px] font-black text-[#c2c086] uppercase mb-4 tracking-widest">
+                      Adultos <span className="text-[#a3b355] ml-1">({currentPrices.adult}€)</span>
+                    </label>
+                    <div className="flex items-center justify-between">
+                      <button onClick={() => setAdults(Math.max(10, adults - 1))} className="w-10 h-10 rounded-full !bg-white shadow-sm text-[#a3b355] font-bold border border-[#f0f2e8]">-</button>
+                      <span className="text-3xl font-bold text-[#7a8a46]">{adults}</span>
+                      <button onClick={() => setAdults(adults + 1)} className="w-10 h-10 rounded-full !bg-white shadow-sm text-[#a3b355] font-bold border border-[#f0f2e8]">+</button>
+                    </div>
                   </div>
-
-                  <div className="bg-[#fdfdfb] p-4 rounded-2xl border border-dashed border-[#c2c086] flex flex-col justify-center">
-                    <p className="text-[10px] font-black text-gray-400 uppercase mb-3 tracking-widest flex items-center gap-2">
-                      <FontAwesomeIcon icon={faTag} /> Precio por Persona
-                    </p>
-                    <div className="flex justify-around text-center">
-                      <div>
-                        <span className="block text-2xl font-serif font-bold text-[#7a8a46]">{currentPrices.adult}€</span>
-                        <span className="text-[10px] text-gray-500 font-bold uppercase tracking-tighter">Adulto</span>
-                      </div>
-                      <div className="w-[1px] h-10 bg-gray-200"></div>
-                      <div>
-                        <span className="block text-2xl font-serif font-bold text-[#7a8a46]">{currentPrices.kid}€</span>
-                        <span className="text-[10px] text-gray-500 font-bold uppercase tracking-tighter">Niño</span>
-                      </div>
+                  <div className="bg-[#f9f9f6] p-6 rounded-3xl border border-[#f0f2e8] text-center">
+                    <label className="block text-[10px] font-black text-[#c2c086] uppercase mb-4 tracking-widest">
+                      Niños (6-12 años) <span className="text-[#a3b355] ml-1">({currentPrices.kid}€)</span>
+                    </label>
+                    <div className="flex items-center justify-between">
+                      <button onClick={() => setKids(Math.max(0, kids - 1))} className="w-10 h-10 rounded-full !bg-white shadow-sm text-[#a3b355] font-bold border border-[#f0f2e8]">-</button>
+                      <span className="text-3xl font-bold text-[#7a8a46]">{kids}</span>
+                      <button onClick={() => setKids(kids + 1)} className="w-10 h-10 rounded-full !bg-white shadow-sm text-[#a3b355] font-bold border border-[#f0f2e8]">+</button>
                     </div>
                   </div>
                 </div>
 
-                {/* 3. Horarios y Noches */}
-                <div className={`grid grid-cols-1 ${pack === 'casa_completa' ? 'md:grid-cols-3' : 'md:grid-cols-2'} gap-6`}>
+                {/* HORAS Y NOCHES */}
+                <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 ${packId === 'casa_completa' ? 'lg:grid-cols-3' : ''}`}>
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-2 font-serif uppercase tracking-wider">Hora Inicio</label>
-                    <input type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} className="w-full p-4 rounded-xl border border-gray-100 outline-none shadow-sm font-bold" />
+                    <label className="block text-[10px] font-black text-[#c2c086] uppercase mb-2 tracking-widest">Entrada</label>
+                    <input type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} className="w-full p-4 rounded-xl border border-[#f0f2e8] font-bold text-[#7a8a46]" />
                   </div>
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-2 font-serif tracking-tight uppercase tracking-wider">Hora Salida Máx.</label>
-                    <div className="w-full p-4 rounded-xl bg-[#f5f5f0] text-[#7a8a46] font-black text-center flex items-center justify-center gap-2 text-xl shadow-sm border border-gray-50">
-                      {endTime}
-                    </div>
+                    <label className="block text-[10px] font-black text-[#c2c086] uppercase mb-2 tracking-widest">Salida Máx. {packId !== 'casa_completa' && '(+2h Regalo)'}</label>
+                    <div className="p-4 rounded-xl !bg-[#f5f5f0] text-[#7a8a46] font-bold text-center text-xl border border-[#c2c086]/20 shadow-inner">{endTime}</div>
                   </div>
-                  {pack === 'casa_completa' && (
-                    <div className="animate-fade-in">
-                      <label className="block text-sm font-bold text-gray-700 mb-2 font-serif uppercase tracking-wider">Nº de Noches</label>
-                      <select 
-                        value={nights}
-                        onChange={(e) => setNights(Number(e.target.value))}
-                        className="w-full p-4 rounded-xl border border-[#a3b355] bg-white shadow-sm font-bold text-[#7a8a46] outline-none"
-                      >
-                        {[1, 2, 3, 4, 5].map(n => (
-                          <option key={n} value={n}>{n} {n === 1 ? 'noche' : 'noches'}</option>
-                        ))}
+                  {packId === 'casa_completa' && (
+                    <div>
+                      <label className="block text-[10px] font-black text-[#c2c086] uppercase mb-2 tracking-widest text-[#a3b355]">Noches (Dto. 50% extra)</label>
+                      <select value={nights} onChange={(e) => setNights(Number(e.target.value))} className="w-full p-4 rounded-xl border-2 border-[#a3b355] font-bold text-[#7a8a46] !bg-white">
+                        {[1,2,3,4,5,6,7].map(n => <option key={n} value={n}>{n} {n === 1 ? 'noche' : 'noches'}</option>)}
                       </select>
                     </div>
                   )}
                 </div>
 
-                {/* 4. Asistentes */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
-                  <div className="bg-gray-50 p-6 rounded-3xl border border-white shadow-sm">
-                    <label className="block text-[11px] font-black text-gray-400 uppercase mb-4 tracking-widest text-center">Adultos (mín. 10)</label>
-                    <div className="flex items-center justify-between px-4">
-                      <button onClick={() => setAdults(Math.max(10, adults - 1))} className="w-12 h-12 rounded-full bg-white shadow-md text-2xl font-bold text-[#a3b355] border-none">-</button>
-                      <span className="text-4xl font-serif font-bold text-gray-800">{adults}</span>
-                      <button onClick={() => setAdults(adults + 1)} className="w-12 h-12 rounded-full bg-white shadow-md text-2xl font-bold text-[#a3b355] border-none">+</button>
+                {/* PROMOS APLICADAS */}
+                <div className="space-y-3">
+                  {packId !== 'casa_completa' && (
+                    <div className="!bg-[#f0f2e8] p-4 rounded-2xl border border-[#c2c086]/30 flex items-center gap-4 text-[#7a8a46]">
+                      <FontAwesomeIcon icon={faGift} className="text-[#a3b355] text-lg" />
+                      <p className="text-xs font-bold uppercase tracking-tight">Incluimos +2 horas de cortesía en tu horario de salida.</p>
                     </div>
-                  </div>
-                  <div className="bg-gray-50 p-6 rounded-3xl border border-white shadow-sm">
-                    <label className="block text-[11px] font-black text-gray-400 uppercase mb-4 tracking-widest text-center">Niños (6-12 años)</label>
-                    <div className="flex items-center justify-between px-4">
-                      <button onClick={() => setKids(Math.max(0, kids - 1))} className="w-12 h-12 rounded-full bg-white shadow-md text-2xl font-bold text-[#a3b355] border-none">-</button>
-                      <span className="text-4xl font-serif font-bold text-gray-800">{kids}</span>
-                      <button onClick={() => setKids(kids + 1)} className="w-12 h-12 rounded-full bg-white shadow-md text-2xl font-bold text-[#a3b355] border-none">+</button>
+                  )}
+                  {nights > 1 && (
+                    <div className="!bg-[#f0f2e8] p-4 rounded-2xl border border-[#a3b355]/30 flex items-center gap-4 text-[#7a8a46]">
+                      <FontAwesomeIcon icon={faMoon} className="text-[#a3b355] text-lg" />
+                      <p className="text-xs font-bold uppercase tracking-tight">¡Aplicado 50% de descuento en tus noches adicionales!</p>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
             </div>
           </div>
 
-          {/* COLUMNA DERECHA: RESUMEN ACTUALIZADO */}
+          {/* RESUMEN LATERAL */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-[2.5rem] p-8 shadow-2xl border border-[#c2c086]/20 sticky top-8">
-              <h3 className="text-xl font-serif text-[#7a8a46] mb-6 border-b border-dashed pb-4 italic text-center uppercase tracking-widest">Resumen</h3>
+              <h3 className="text-xl font-serif text-[#7a8a46] mb-6 text-center border-b pb-4">Resumen de Pago</h3>
               
-              <div className="space-y-4 mb-8">
-                {/* Desglose Adultos */}
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-500 font-medium font-serif">Adultos ({adults} x {currentPrices.adult}€)</span>
-                  <span className="font-bold text-gray-700">{adults * currentPrices.adult}€</span>
+              <div className="space-y-4 text-sm text-[#7a8a46]">
+                <div className="flex justify-between">
+                  <span>Asistentes ({adults + kids})</span>
+                  <span className="font-bold">{(adults * currentPrices.adult) + (kids * currentPrices.kid)}€</span>
                 </div>
 
-                {/* Desglose Niños */}
-                {kids > 0 && (
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-gray-500 font-medium font-serif">Niños ({kids} x {currentPrices.kid}€)</span>
-                    <span className="font-bold text-gray-700">{kids * currentPrices.kid}€</span>
-                  </div>
-                )}
-
-                {/* Línea de Descuento (Solo aplicado a personas) */}
                 {discountPercent > 0 && (
-                  <div className="flex justify-between items-center text-sm text-green-600 font-bold bg-green-50 p-3 rounded-xl border border-green-100">
-                    <span className="flex items-center gap-1 uppercase text-[10px]">
-                      <FontAwesomeIcon icon={faCheckCircle} />
-                      Dto. Personas {discountPercent}%
-                    </span>
-                    <span>Aplicado</span>
+                  <div className="flex justify-between text-green-700 text-xs bg-green-50 p-2 rounded-lg border border-green-100">
+                    <span>Dto. Grupo ({discountPercent}%)</span>
+                    <span className="font-bold">- {Math.round(((adults * currentPrices.adult) + (kids * currentPrices.kid)) * (discountPercent/100))}€</span>
                   </div>
                 )}
 
-                {/* Desglose Pernocta neto */}
-                {pack === 'casa_completa' && (
-                  <div className="border-t border-gray-100 pt-4 space-y-2">
-                    <div className="flex justify-between items-center text-sm">
-                      <span className="text-gray-600 font-bold font-serif italic tracking-wide">Alojamiento (Precio Neto)</span>
-                    </div>
-                    <div className="flex justify-between items-center text-xs text-gray-500">
-                      <span>1ª Noche</span>
-                      <span>{PRECIO_BASE_CASA}€</span>
+                {currentPrices.baseCasa > 0 && (
+                  <div className="pt-4 border-t border-dashed border-[#c2c086]/40">
+                    <div className="flex justify-between">
+                      <span>Alquiler Casa (1ª noche)</span>
+                      <span>{currentPrices.baseCasa}€</span>
                     </div>
                     {nights > 1 && (
-                      <div className="flex justify-between items-center text-xs text-[#7a8a46]">
-                        <span>Noches extra ({nights - 1} x 50% dto)</span>
-                        <span>{(nights - 1) * (PRECIO_BASE_CASA * 0.5)}€</span>
+                      <div className="flex justify-between text-green-700 mt-2 bg-green-50 p-2 rounded-lg border border-green-100 text-xs">
+                        <span>{nights - 1} Noches extra (-50%)</span>
+                        <span className="font-bold">+ {(nights - 1) * (currentPrices.baseCasa * 0.5)}€</span>
                       </div>
                     )}
                   </div>
                 )}
-
-                <div className="pt-6 border-t-2 border-gray-100 mt-4 text-center">
-                  <p className="text-[10px] text-gray-400 uppercase font-black mb-1 tracking-widest">Total Estimado</p>
+                
+                <div className="pt-6 border-t-2 border-[#f5f5f0] text-center">
+                  <p className="text-[10px] text-[#c2c086] uppercase font-black tracking-widest">Total a pagar</p>
                   <div className="flex items-baseline justify-center gap-1 text-[#a3b355]">
-                    <span className="text-7xl font-serif font-bold tracking-tighter">{total}</span>
-                    <span className="text-3xl font-serif font-bold">€</span>
+                    <span className="text-6xl font-serif font-bold tracking-tighter">{total}</span>
+                    <span className="text-2xl font-bold">€</span>
                   </div>
+                  <p className="text-[9px] text-[#c2c086] italic mt-2 text-center uppercase">Confirmación sujeta a disponibilidad</p>
                 </div>
               </div>
 
-              <button className="w-full bg-black text-white py-6 rounded-[2rem] font-black text-xl shadow-xl hover:bg-gray-900 transition-all active:scale-95 flex items-center justify-center gap-3">
-                <FontAwesomeIcon icon={faCalendarAlt} />
-                Confirmar Reserva
+              <button 
+                disabled={!date} 
+                className={`w-full mt-6 py-5 rounded-3xl font-black text-xl shadow-lg transition-all ${
+                  !date 
+                  ? '!bg-gray-100 !text-gray-400 cursor-not-allowed shadow-none border border-gray-200' 
+                  : '!bg-[#7a8a46] !text-white hover:!bg-[#8f9d4a] active:scale-95'
+                }`}
+              >
+                RESERVAR AHORA
               </button>
             </div>
           </div>
-
         </div>
       </div>
     </section>
