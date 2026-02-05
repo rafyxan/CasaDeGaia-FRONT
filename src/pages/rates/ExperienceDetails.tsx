@@ -1,3 +1,4 @@
+import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faUtensils, 
@@ -5,6 +6,10 @@ import {
   faGlassCheers, 
   faStar 
 } from '@fortawesome/free-solid-svg-icons';
+
+// Tus imágenes ya importadas
+import barbacoa from '../../assets/img/barbacoa.jpg';
+import interior from '../../assets/img/karaoke-ext.jpg';
 
 export default function ExperienceDetails() {
   return (
@@ -17,7 +22,7 @@ export default function ExperienceDetails() {
             <div className="inline-block bg-[#f5f5f0] text-[#a3b355] px-4 py-2 rounded-full text-sm font-bold tracking-widest uppercase">
               Gastronomía
             </div>
-            <h3 className="text-4xl font-serif text-title-sage leading-tight">
+            <h3 className="text-4xl font-serif text-[#7a8a46] leading-tight">
               Barbacoa Interior: <br /> El corazón de la reunión
             </h3>
             <p className="text-gray-600 leading-relaxed">
@@ -40,11 +45,11 @@ export default function ExperienceDetails() {
           </div>
           <div className="lg:w-1/2 w-full">
             <div className="relative">
-              <div className="absolute -inset-4 bg-[#f5f5f0] rounded-[2rem] -rotate-2"></div>
+              <div className="absolute -inset-4 bg-[#f5f5f0] rounded-4xl -rotate-2"></div>
               <img 
-                src="RUTA_DE_TU_IMAGEN_BARBACOA" 
+                src={barbacoa} 
                 alt="Barbacoa Casa de Gaia" 
-                className="relative rounded-[2rem] shadow-2xl w-full h-[400px] object-cover"
+                className="relative rounded-4xl shadow-2xl w-full h-[400px] object-cover"
               />
             </div>
           </div>
@@ -56,7 +61,7 @@ export default function ExperienceDetails() {
             <div className="inline-block bg-[#f5f5f0] text-[#a3b355] px-4 py-2 rounded-full text-sm font-bold tracking-widest uppercase">
               Diversión
             </div>
-            <h3 className="text-4xl font-serif text-title-sage leading-tight">
+            <h3 className="text-4xl font-serif text-[#7a8a46] leading-tight">
               Tu gente. Tu música. <br /> Tu momento.
             </h3>
             <p className="text-gray-600 leading-relaxed">
@@ -79,11 +84,11 @@ export default function ExperienceDetails() {
           </div>
           <div className="lg:w-1/2 w-full">
             <div className="relative">
-              <div className="absolute -inset-4 bg-[#f5f5f0] rounded-[2rem] rotate-2"></div>
+              <div className="absolute -inset-4 bg-[#f5f5f0] rounded-4xl rotate-2"></div>
               <img 
-                src="RUTA_DE_TU_IMAGEN_DISCOTECA" 
-                alt="Discoteca Casa de Gaia" 
-                className="relative rounded-[2rem] shadow-2xl w-full h-[400px] object-cover"
+                src={interior} 
+                alt="Discoteca y ocio Casa de Gaia" 
+                className="relative rounded-4xl shadow-2xl w-full h-[400px] object-cover"
               />
             </div>
           </div>
