@@ -29,14 +29,14 @@ const Navbar: React.FC = () => {
         <div className="flex items-center justify-between h-20"> 
           
           {/* 1. LOGO */}
-          <div className="flex-shrink-0 z-50"> 
+          <div className="shrink-0 z-50"> 
             <Link to="/" onClick={() => setIsOpen(false)}>
               <img src={logoImage} alt="Logo Casa de Gaia" className="h-12 md:h-14 w-auto" />
             </Link>
           </div>
           
           {/* 2. MENÚ DESKTOP (Se oculta en móvil: hidden, se muestra en md: flex) */}
-          <nav className="hidden md:flex flex-grow justify-center">
+          <nav className="hidden md:flex grow justify-center">
             <div className="flex space-x-8 lg:space-x-10">
               {navLinks.map((link) => (
                 <Link

@@ -112,10 +112,8 @@ export default function RatesSection() {
   return (
     <section className="py-20 px-4 bg-[#fdfdfb]">
       <div className="max-w-7xl mx-auto">
-        
         <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-serif text-[#7a8a46] mb-4">Planes y Tarifas</h2>
-          <p className="text-gray-500 max-w-2xl mx-auto mb-10">Selecciona la temporada de tu evento para actualizar los precios.</p>
+          <p className="text-gray-500 max-w-2xl mx-auto mb-10 font-bold text-2xl">Selecciona la temporada de tu evento para actualizar los precios.</p>
           
           {/* SELECTOR DE TEMPORADA - ESTILO BLANCO MINIMALISTA */}
          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto mb-12">

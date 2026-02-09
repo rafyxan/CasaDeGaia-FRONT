@@ -1,6 +1,8 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarCheck, faVideo } from '@fortawesome/free-solid-svg-icons';
 import backgroundImage from '../../assets/Inicio-gaia.png';
+import { Link } from 'react-router-dom';
+
 
 type Props = {}
 
@@ -41,16 +43,19 @@ export default function HeroSection({}: Props) {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           
           {/* Botón Principal (Verde) */}
+          <Link to="/tarifas" className="inline-block">
           <button className="bg-button-sage hover:bg-[#8e8e6b] text-white px-8 py-4 rounded-lg font-bold flex items-center gap-3 transition-all transform hover:scale-105 shadow-lg">
             <FontAwesomeIcon icon={faCalendarCheck} />
             Reservar Ahora
           </button>
+          </Link>
 
           {/* Botón Secundario (Transparente/Blur) */}
           <button className="bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/30 text-white px-8 py-4 rounded-lg font-bold flex items-center gap-3 transition-all">
             <FontAwesomeIcon icon={faVideo} />
-            Solicitar Visita / Tour Virtual
+            Solicitar Visita / Tour
           </button>
+          
           
         </div>
       </div>
