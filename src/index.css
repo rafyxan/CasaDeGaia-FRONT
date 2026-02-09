@@ -7,7 +7,7 @@
 
   color-scheme: light;
   color: rgba(0, 0, 0, 0.87);
-  background-color: #cc5959;
+  background-color: #f0e6d1;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -147,4 +147,10 @@ button:focus-visible {
 
 .shadow-card {
   box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+/* Esto obliga al contenedor de la librería a expandirse */
+.react-datepicker-wrapper {
+    display: block !important;
+    width: 100% !important;
 }

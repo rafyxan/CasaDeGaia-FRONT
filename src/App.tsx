@@ -11,6 +11,7 @@ import ContactPage from './pages/contact/Contact';
 import Blog from './pages/blog/Blog';
 import BookingPage from './pages/rates/BookingForm';
 import NotFound from './pages/blog/Blog'; // Componente de error 404
+import TourRequestForm from './pages/tour/Tour';
 
 const App: React.FC = () => {
   return (
@@ -27,6 +28,7 @@ const App: React.FC = () => {
         <Route path="/login" element={<div>Página de Login</div>} /> 
         <Route path="/blog" element={<Blog />} />
         <Route path="/reservar" element={<BookingPage />} />
+        <Route path="/solicitar-tour" element={<TourRequestForm />} />
         
         {/* Ruta catch-all para errores 404 */}
         <Route path="*" element={<NotFound />} />

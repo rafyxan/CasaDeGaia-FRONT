@@ -18,6 +18,7 @@ const navLinks: NavLink[] = [
   { name: 'Tarifas', path: '/tarifas', icon: faTag },
   { name: 'Blog', path: '/blog', icon: faBookOpen },
   { name: 'Contacto', path: '/contacto', icon: faEnvelope },
+  { name: 'Solicitar Tour', path: '/solicitar-tour', icon: faBookOpen },
 ];
 
 const Navbar: React.FC = () => {

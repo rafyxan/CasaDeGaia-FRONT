@@ -51,11 +51,12 @@ export default function HeroSection({}: Props) {
           </Link>
 
           {/* Botón Secundario (Transparente/Blur) */}
+          <Link to="/solicitar-tour" className="inline-block">
           <button className="bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/30 text-white px-8 py-4 rounded-lg font-bold flex items-center gap-3 transition-all">
             <FontAwesomeIcon icon={faVideo} />
             Solicitar Visita / Tour
           </button>
-          
+          </Link>
           
         </div>
       </div>
